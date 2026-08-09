@@ -11,9 +11,9 @@ import base64
 import os
 from contextlib import contextmanager
 
-import psycopg2
+import psycopg
 from databricks.sdk import WorkspaceClient
-from psycopg2.extras import RealDictCursor
+from psycopg.rows import dict_row
 from sqlalchemy import create_engine
 
 _w = WorkspaceClient()
@@ -30,8 +30,8 @@ def _lakebase_url() -> str:
 
 @contextmanager
 def get_connection():
-    """Yield a raw psycopg2 connection with a RealDictCursor factory."""
-    conn = psycopg2.connect(_lakebase_url(), cursor_factory=RealDictCursor)
+    """Yield a raw psycopg connection with dict_row factory."""
+    conn = psycopg.connect(_lakebase_url(), row_factory=dict_row)
     try:
         yield conn
     finally:
@@ -71,11 +71,11 @@ def ensure_weather_tables(embedding_dim: int = 384) -> None:
         f"""
         CREATE TABLE IF NOT EXISTS weather_documents (
             id TEXT PRIMARY KEY,
-            source TEXT NOT NULL,
-            title TEXT,
-            description TEXT,
-            instruction TEXT,
-            published TIMESTAMPTZ,
+            location TEXT NOT NULL,
+            source_type TEXT NOT NULL,
+            headline TEXT,
+            narrative_text TEXT,
+            issued_at TIMESTAMPTZ,
             payload JSONB NOT NULL,
             synced_at TIMESTAMPTZ NOT NULL DEFAULT now()
         )

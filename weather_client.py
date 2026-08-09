@@ -134,18 +134,17 @@ def upsert_documents(docs: List[Dict]) -> int:
     if not docs:
         return 0
     sql = (
-        "INSERT INTO weather_documents (id, source, title, description, instruction, published, payload, synced_at) "
+        "INSERT INTO weather_documents (id, location, source_type, headline, narrative_text, issued_at, payload, synced_at) "
         "VALUES (%s,%s,%s,%s,%s,%s,%s,now()) "
-        "ON CONFLICT (id) DO UPDATE SET payload = EXCLUDED.payload, synced_at = now()"
+        "ON CONFLICT (id) DO UPDATE SET narrative_text = EXCLUDED.narrative_text, payload = EXCLUDED.payload, synced_at = now()"
     )
     params = []
     for d in docs:
-        # Map our normalized fields to columns: use title=headline, description=narrative_text
         params.append((
             d.get("id"),
+            d.get("location"),
             d.get("source_type"),
             d.get("headline"),
-            None,
             d.get("narrative_text"),
             d.get("issued_at"),
             json.dumps(d.get("payload") or {}),

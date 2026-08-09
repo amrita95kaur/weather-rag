@@ -1,0 +1,18 @@
+resources:
+  jobs:
+    ingest_weather:
+      name: 'Weather Ingestion Job'
+      tasks:
+        - task_key: 'ingest_weather_embeddings'
+          description: 'Fetch NWS alerts and write embeddings to Lakebase'
+          notebook_task:
+            notebook_path: ../notebooks/ingest_weather_embeddings.py
+          new_cluster:
+            node_type_id: 'i3.xlarge'
+            spark_version: '15.4.x-gpu-ml-scala2.12'
+            num_workers: 0
+            spark_conf:
+              spark.master: 'local[*, 4]'
+              spark.databricks.cluster.profile: 'singleNode'
+            custom_tags:
+              ResourceClass: 'SingleNode'

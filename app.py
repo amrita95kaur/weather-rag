@@ -107,7 +107,7 @@ def weather_search():
     qvec_literal = "[" + ",".join(map(lambda x: repr(float(x)), vec)) + "]"
 
     sql = (
-        "SELECT d.id AS document_id, d.source AS source, d.title AS headline, d.description AS description, "
+        "SELECT d.id AS document_id, d.location AS location, d.source_type AS source_type, d.headline AS headline, "
         "e.chunk_text, (e.embedding <=> %s::vector) AS distance "
         "FROM weather_embeddings e JOIN weather_documents d ON d.id = e.document_id "
         "ORDER BY distance ASC LIMIT %s"
@@ -122,7 +122,8 @@ def weather_search():
         results.append(
             {
                 "document_id": r.get("document_id"),
-                "location": r.get("source"),
+                "location": r.get("location"),
+                "source_type": r.get("source_type"),
                 "headline": r.get("headline"),
                 "chunk_text": r.get("chunk_text"),
                 "similarity": similarity,

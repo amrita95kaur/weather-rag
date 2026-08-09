@@ -26,6 +26,9 @@ w.secrets.put_secret(
     string_value=getpass.getpass("Paste your Lakebase URL: ")
 )
 
+# lakebase-url = "
+# postgresql://student:npg_h9WJUmFj5Kal@ep-sparkling-base-d8wb4gaq.database.us-east-2.cloud.databricks.com/databricks_postgres?sslmode=require
+# "
 
 w.secrets.put_acl(
     scope="database",
